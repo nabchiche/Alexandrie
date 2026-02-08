@@ -370,7 +370,11 @@ INSERT INTO abonne (numero_carte, nom, prenom, email, telephone, date_inscriptio
 ('A001', 'Martin', 'Lucas', 'lucas.martin@mail.com', '0600000001', '2023-01-10', 1, 1, 'actif', NULL),
 ('A002', 'Durand', 'Emma', 'emma.durand@mail.com', '0600000002', '2022-05-18', 2, 3, 'actif', NULL),
 ('A003', 'Bernard', 'Chloé', 'chloe.bernard@mail.com', '0600000003', '2024-01-05', 1, 2, 'actif', NULL),
-('A004', 'Petit', 'Nicolas', 'nicolas.petit@mail.com', '0600000004', '2021-11-22', 2, 4, 'actif', NULL);
+('A004', 'Petit', 'Nicolas', 'nicolas.petit@mail.com', '0600000004', '2021-11-22', 2, 4, 'actif', NULL),
+('A005', 'Lefevre', 'Camille', 'camille.lefevre@mail.com', '0600000005', '2020-09-14', 1, 1, 'suspendu', '2026-03-15'),
+('A006', 'Moreau', 'Antoine', 'antoine.moreau@mail.com', '0600000006', '2019-02-03', 2, 3, 'suspendu', '2026-02-10'),
+('A007', 'Roux', 'Sarah', 'sarah.roux@mail.com', '0600000007', '2021-06-30', 1, 2, 'suspendu', '2026-01-31');
+
 
 INSERT INTO exemplaire (code_barres, id_ouvrage, id_bibliotheque, id_emplacement, statut, etat, date_acquisition) VALUES
 ('EX001', 1, 1, 1, 'disponible', 'bon', '2020-02-01'),
@@ -379,13 +383,19 @@ INSERT INTO exemplaire (code_barres, id_ouvrage, id_bibliotheque, id_emplacement
 ('EX004', 3, 3, NULL, 'en_transfert', 'bon', '2019-10-05'),
 ('EX005', 3, 4, 5, 'disponible', 'bon', '2022-04-10'),
 ('EX006', 2, 3, 4, 'disponible', 'bon', '2020-06-15'),
-('EX007', 1, 3, NULL, 'perdu', 'perdu', '2020-05-20');
+('EX007', 1, 3, NULL, 'perdu', 'perdu', '2020-05-20'),
+('EX008', 1, 3, 4, 'disponible', 'bon', '2023-09-10'),
+('EX009', 1, 4, 5, 'disponible', 'bon', '2024-02-18'),
+('EX010', 2, 2, 3, 'disponible', 'bon', '2023-03-22'),
+('EX011', 3, 1, 1, 'disponible', 'bon', '2024-06-01');
 
 INSERT INTO pret (id_exemplaire, id_abonne, id_bibliotheque_pret, date_pret, date_retour_prevue, date_retour_effective, statut) VALUES
 (2, 1, 2, '2023-12-01 10:00:00', '2023-12-20 10:00:00', '2023-12-30 15:00:00', 'rendu'),
 (3, 2, 1, '2024-01-10 09:30:00', '2024-01-31 09:30:00', NULL, 'en_cours'),
 (6, 3, 3, '2024-01-05 14:00:00', '2024-01-26 14:00:00', '2024-01-26 13:00:00', 'rendu'),
-(5, 4, 4, '2023-11-10 16:00:00', '2023-12-08 16:00:00', '2023-12-20 11:00:00', 'rendu');
+(5, 4, 4, '2023-11-10 16:00:00', '2023-12-08 16:00:00', '2023-12-20 11:00:00', 'rendu'),
+(1, 3, 1, '2026-01-15 11:00:00', '2026-02-05 11:00:00', NULL, 'en_cours'),
+(6, 4, 3, '2026-01-10 09:00:00', '2026-01-31 09:00:00', NULL, 'en_cours');
 
 INSERT INTO reservation (id_exemplaire, id_abonne, date_reservation, statut) VALUES
 (4, 1, '2024-01-05 12:00:00', 'active'),
@@ -397,11 +407,23 @@ INSERT INTO transporteur (nom) VALUES
 
 INSERT INTO envoi_transfert (id_bibliotheque_source, id_bibliotheque_destination, id_transporteur, date_demande, date_depart, date_arrivee, statut, distance_km, cout_estime, note) VALUES
 (3, 1, 1, '2024-01-06 09:00:00', '2024-01-07 09:00:00', '2024-01-10 11:30:00', 'arrive', 930.00, 45.00, NULL),
-(3, 2, 2, '2024-01-08 10:00:00', '2024-01-09 10:00:00', NULL, 'en_cours', 928.00, 39.90, 'Groupage prévu');
+(3, 2, 2, '2024-01-08 10:00:00', '2024-01-09 10:00:00', NULL, 'en_cours', 928.00, 39.90, 'Groupage prévu'),
+(1, 3, 1, '2025-09-10 09:00:00', '2025-09-11 09:00:00', '2025-09-13 10:30:00', 'arrive', 930.00, 44.00, NULL),
+(3, 4, 2, '2025-10-02 10:00:00', '2025-10-03 10:00:00', '2025-10-04 15:00:00', 'arrive', 465.00, 22.50, NULL),
+(4, 1, 1, '2025-11-15 08:30:00', '2025-11-16 08:30:00', '2025-11-17 12:00:00', 'arrive', 470.00, 23.00, NULL),
+(2, 1, 2, '2025-12-05 14:00:00', '2025-12-06 14:00:00', '2025-12-07 18:00:00', 'arrive', 12.00, 6.50, NULL),
+(3, 1, 1, '2026-01-05 09:00:00', '2026-01-06 09:00:00', '2026-01-08 11:00:00', 'arrive', 930.00, 45.00, 'Renfort stock'),
+(1, 2, 2, '2026-01-20 10:00:00', '2026-01-21 10:00:00', '2026-01-21 18:00:00', 'arrive', 12.00, 6.90, 'Transfert rapide');
 
 INSERT INTO liaison_envoi_exemplaire (id_envoi, id_exemplaire, id_reservation) VALUES
 (1, 4, 1),
-(2, 6, NULL);
+(2, 6, NULL),
+(3, 1, NULL),
+(4, 8, NULL),
+(5, 9, NULL),
+(6, 10, NULL),
+(7, 8, NULL),
+(8, 11, NULL);
 
 INSERT INTO type_evenement (libelle) VALUES
 ('Conference'),
@@ -412,13 +434,20 @@ INSERT INTO evenement (id_bibliotheque, id_type_evenement, titre, description, d
 (1, 1, 'Conférence IA', 'Panorama des usages IA', '2024-02-01 18:00:00', '2024-02-01 20:00:00', TRUE, 100),
 (3, 2, 'Expo Science-Fiction', 'Auteurs et œuvres majeures', '2024-03-10 10:00:00', '2024-03-20 18:00:00', TRUE, 200),
 (2, 1, 'Conférence Cybersécurité', 'Bonnes pratiques et prévention', '2024-02-15 18:30:00', '2024-02-15 20:00:00', TRUE, 80),
-(4, 3, 'Atelier Réseaux', 'Initiation réseaux', '2024-04-05 14:00:00', '2024-04-05 16:00:00', TRUE, 30);
+(4, 3, 'Atelier Réseaux', 'Initiation réseaux', '2024-04-05 14:00:00', '2024-04-05 16:00:00', TRUE, 30),
+(1, 1, 'Conférence IA (2026)', 'Actualités IA et démonstrations', '2026-02-20 18:00:00', '2026-02-20 20:00:00', TRUE, 120),
+(3, 2, 'Expo Robotique (2026)', 'Robots et industrie', '2026-05-02 10:00:00', '2026-05-12 18:00:00', TRUE, 250),
+(2, 1, 'Conférence Cloud (2026)', 'Architecture cloud public', '2026-05-10 18:30:00', '2026-05-10 20:00:00', TRUE, 90);
 
 INSERT INTO liaison_participation_evenement (id_evenement, id_abonne, nom_participant, prenom_participant, email_participant, date_inscription, statut, note) VALUES
 (1, 1, NULL, NULL, NULL, '2024-01-20 10:00:00', 'present', NULL),
 (2, 2, NULL, NULL, NULL, '2024-02-15 11:00:00', 'inscrit', NULL),
 (3, 3, NULL, NULL, NULL, '2024-02-01 09:00:00', 'present', NULL),
-(4, NULL, 'Moreau', 'Julie', 'julie.moreau@mail.com', '2024-03-25 17:00:00', 'inscrit', 'Participant externe');
+(4, NULL, 'Moreau', 'Julie', 'julie.moreau@mail.com', '2024-03-25 17:00:00', 'inscrit', 'Participant externe'),
+(5, 1, NULL, NULL, NULL, '2026-02-05 09:00:00', 'inscrit', NULL),
+(5, 3, NULL, NULL, NULL, '2026-02-10 10:00:00', 'inscrit', NULL),
+(6, 2, NULL, NULL, NULL, '2026-04-25 12:00:00', 'inscrit', NULL),
+(7, NULL, 'Garcia', 'Paul', 'paul.garcia@mail.com', '2026-04-30 18:00:00', 'inscrit', 'Participant externe');
 
 INSERT INTO rachat (id_ouvrage, id_bibliotheque, date_rachat, quantite, raison) VALUES
 (1, 1, '2024-01-15', 5, 'stock_insuffisant'),
