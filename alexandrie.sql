@@ -423,3 +423,75 @@ INSERT INTO liaison_participation_evenement (id_evenement, id_abonne, nom_partic
 INSERT INTO rachat (id_ouvrage, id_bibliotheque, date_rachat, quantite, raison) VALUES
 (1, 1, '2024-01-15', 5, 'stock_insuffisant'),
 (2, 2, '2024-01-18', 2, 'stock_nul');
+
+-- ---------------------------------------------------------------------------
+-- Données complémentaires pour couvrir les requêtes de raph.sql
+-- ---------------------------------------------------------------------------
+
+INSERT INTO adresse (ligne1, ligne2, code_postal, ville, pays, id_region) VALUES
+('25 rue de la République', NULL, '13001', 'Marseille', 'France', 1);
+
+INSERT INTO bibliotheque (nom, id_adresse, date_integration, latitude, longitude) VALUES
+('Bibliothèque Marseille Vieux-Port', 5, '2023-07-01', 43.296400, 5.369800);
+
+INSERT INTO emplacement (id_bibliotheque, etage, rayon, numero_rayon) VALUES
+(5, 'RDC', 'Romans', 'R1');
+
+INSERT INTO auteur (nom, prenom) VALUES
+('Herbert', 'Frank'),
+('Zola', 'Émile');
+
+INSERT INTO ouvrage (isbn, titre, id_categorie, consultable_seulement) VALUES
+('9780441172719', 'Dune', 2, FALSE),
+('9782070409228', 'Germinal', 2, FALSE),
+('9780618640157', 'The Lord of the Rings', 2, FALSE);
+
+INSERT INTO liaison_ouvrage_auteur (id_ouvrage, id_auteur) VALUES
+(4, 4),
+(5, 5),
+(6, 1);
+
+INSERT INTO liaison_ouvrage_collection (id_ouvrage, id_collection) VALUES
+(4, 1),
+(5, 1),
+(6, 1);
+
+INSERT INTO exemplaire (code_barres, id_ouvrage, id_bibliotheque, id_emplacement, statut, etat, date_acquisition) VALUES
+('EX_TEST_01', 4, 1, 1, 'disponible', 'bon', '2023-06-01'),
+('EX_TEST_02', 4, 2, 3, 'en_transfert', 'bon', '2023-06-15'),
+('EX_TEST_03', 6, 1, 1, 'disponible', 'bon', '2023-07-10'),
+('EX_TEST_04', 5, 3, 4, 'reserve', 'bon', '2023-08-20'),
+('EX_TEST_05', 4, 3, 4, 'disponible', 'bon', '2023-09-01'),
+('EX_TEST_06', 6, 4, 5, 'disponible', 'bon', '2023-09-15'),
+('EX_TEST_07', 5, 5, 6, 'disponible', 'bon', '2023-10-01');
+
+INSERT INTO reservation (id_exemplaire, id_abonne, date_reservation, statut) VALUES
+(12, 1, '2024-01-20 10:00:00', 'active');
+
+INSERT INTO pret (id_exemplaire, id_abonne, id_bibliotheque_pret, date_pret, date_retour_prevue, date_retour_effective, statut) VALUES
+(8, 1, 1, '2024-01-08 10:00:00', '2024-01-29 10:00:00', '2024-01-25 14:00:00', 'rendu'),
+(13, 4, 4, '2023-11-20 11:00:00', '2023-12-18 11:00:00', '2023-12-15 09:00:00', 'rendu'),
+(10, 2, 1, '2024-01-12 09:00:00', '2024-02-02 09:00:00', NULL, 'en_cours');
+
+INSERT INTO envoi_transfert (id_bibliotheque_source, id_bibliotheque_destination, id_transporteur, date_demande, date_depart, date_arrivee, statut, distance_km, cout_estime, note) VALUES
+(2, 4, 1, '2024-01-11 08:00:00', '2024-01-12 09:00:00', '2024-01-15 14:00:00', 'arrive', 470.00, 23.50, 'Transfert Nice Est vers Lyon'),
+(1, 3, 2, '2024-01-20 10:00:00', NULL, NULL, 'demande', 930.00, 46.50, 'Demande groupage A lot 1'),
+(1, 3, 2, '2024-01-21 11:00:00', NULL, NULL, 'demande', 930.00, 46.50, 'Demande groupage A lot 2');
+
+INSERT INTO liaison_envoi_exemplaire (id_envoi, id_exemplaire, id_reservation) VALUES
+(3, 9, NULL),
+(4, 8, NULL),
+(5, 10, NULL);
+
+INSERT INTO evenement (id_bibliotheque, id_type_evenement, titre, description, debut, fin, gratuit, capacite) VALUES
+(4, 3, 'Atelier SQL Avancé', 'Requêtes avancées et optimisation', NOW() + INTERVAL '10 days', NOW() + INTERVAL '10 days' + INTERVAL '2 hours', TRUE, 25),
+(1, 1, 'Conférence Littérature', 'Panorama littérature contemporaine', NOW() + INTERVAL '20 days', NOW() + INTERVAL '20 days' + INTERVAL '2 hours', TRUE, 60);
+
+INSERT INTO liaison_participation_evenement (id_evenement, id_abonne, nom_participant, prenom_participant, email_participant, date_inscription, statut, note) VALUES
+((SELECT id_evenement FROM evenement WHERE titre = 'Atelier SQL Avancé'), 1, NULL, NULL, NULL, NOW() - INTERVAL '5 days', 'inscrit', NULL),
+((SELECT id_evenement FROM evenement WHERE titre = 'Atelier SQL Avancé'), 4, NULL, NULL, NULL, NOW() - INTERVAL '3 days', 'inscrit', NULL),
+((SELECT id_evenement FROM evenement WHERE titre = 'Conférence Littérature'), 1, NULL, NULL, NULL, NOW() - INTERVAL '2 days', 'inscrit', NULL),
+((SELECT id_evenement FROM evenement WHERE titre = 'Conférence Littérature'), 4, NULL, NULL, NULL, NOW() - INTERVAL '1 day', 'inscrit', NULL);
+
+INSERT INTO reservation (id_exemplaire, id_abonne, date_reservation, statut) VALUES
+(12, 1, '2024-01-20 10:00:00', 'active');
