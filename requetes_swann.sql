@@ -3,33 +3,24 @@
 -- =========================
 
 -- Swann / Abonnés / Lister tous les abonnés
+-- Vérifie que tous les abonnés sont correctement enregistrés et accessibles dans la base.
 SELECT a.id_abonne, a.nom, a.prenom
 FROM abonne a
 ORDER BY a.id_abonne;
 
 -- Swann / Abonnés / Consulter la fiche d’un abonné
+-- Permet de contrôler l’intégrité des informations détaillées d’un abonné et de ses relations.
 SELECT
-a.id_abonne,
-a.numero_carte,
-a.nom,
-a.prenom,
-a.email,
-a.telephone,
-a.date_inscription,
-a.statut,
-a.suspendu_jusqua,
-ta.id_type_abonnement,
-ta.libelle AS type_abonnement,
-ta.quota_max,
-ta.duree_pret_jours,
-b.id_bibliotheque,
-b.nom AS bibliotheque_reference
+a.id_abonne, a.numero_carte, a.nom, a.prenom, a.email, a.telephone, a.date_inscription, a.statut, a.suspendu_jusqua,
+ta.id_type_abonnement, ta.libelle AS type_abonnement, ta.quota_max, ta.duree_pret_jours,
+b.id_bibliotheque, b.nom AS bibliotheque_reference
 FROM abonne a
 JOIN type_abonnement ta ON ta.id_type_abonnement = a.id_type_abonnement
 JOIN bibliotheque b ON b.id_bibliotheque = a.id_bibliotheque_reference
 WHERE a.id_abonne = 1;
 
 -- Swann / Abonnés / Lister les abonnés par bibliothèque de référence
+-- Valide le rattachement correct des abonnés à leur bibliothèque principale.
 SELECT
 a.id_abonne,
 a.nom,
@@ -43,6 +34,7 @@ WHERE a.id_bibliotheque_reference = 1
 ORDER BY a.id_abonne;
 
 -- Swann / Abonnés / Lister les abonnés par type d’abonnement
+-- Permet de vérifier l’application correcte des types d’abonnement dans la base.
 SELECT
 a.id_abonne,
 a.nom,
@@ -56,6 +48,7 @@ WHERE a.id_type_abonnement = 1
 ORDER BY a.id_abonne;
 
 -- Swann / Abonnés / Identifier les abonnés suspendus
+-- Sert à contrôler la gestion des sanctions et des périodes de suspension.
 SELECT
 a.id_abonne,
 a.numero_carte,
@@ -67,8 +60,8 @@ FROM abonne a
 WHERE a.statut = 'suspendu'
 ORDER BY a.suspendu_jusqua DESC NULLS LAST, a.nom, a.prenom;
 
-
 -- Swann / Abonnés / Vérifier l’éligibilité d’un abonné à l’emprunt
+-- Centralise les règles métier pour tester automatiquement l’éligibilité à l’emprunt.
 CREATE OR REPLACE VIEW v_stats_abonne AS
 SELECT
 a.id_abonne,
@@ -100,8 +93,8 @@ FROM v_stats_abonne
 WHERE id_abonne = 1;
 
 
-
 -- Swann / Abonnés / Événements programmés et abonnés ayant participé à des événements similaires
+-- Vérifie la cohérence entre événements à venir et l’historique de participation des abonnés.
 CREATE OR REPLACE VIEW v_evenements_a_venir AS
 SELECT
 e.id_evenement,
@@ -116,7 +109,7 @@ FROM evenement e
 JOIN bibliotheque b ON b.id_bibliotheque = e.id_bibliotheque
 JOIN type_evenement te ON te.id_type_evenement = e.id_type_evenement
 WHERE e.debut >= NOW();
-
+-- Permet de relier les événements futurs aux abonnés ayant déjà participé à des événements du même type
 WITH evenements_biblio AS (
 SELECT *
 FROM v_evenements_a_venir
@@ -149,6 +142,7 @@ ORDER BY eb.debut, eb.id_evenement, a.nom, a.prenom;
 -- =========================
 
 -- Swann / Prêts / Lister les prêts en cours
+-- Permet de tester la détection correcte des prêts actifs et non clôturés.
 SELECT
 p.id_pret,
 p.date_pret,
@@ -168,6 +162,7 @@ AND p.date_retour_effective IS NULL
 ORDER BY p.date_retour_prevue;
 
 -- Swann / Prêts / Lister les prêts d’un abonné
+-- Vérifie le suivi des emprunts actifs pour un abonné donné.
 SELECT
 p.id_pret,
 p.date_pret,
@@ -183,6 +178,7 @@ AND p.date_retour_effective IS NULL
 ORDER BY p.date_pret DESC;
 
 -- Swann / Prêts / Consulter l’historique des prêts d’un abonné
+-- Permet de tester la conservation complète de l’historique des prêts.
 SELECT
 p.id_pret,
 p.date_pret,
@@ -198,6 +194,7 @@ WHERE p.id_abonne = 1
 ORDER BY p.date_pret DESC;
 
 -- Swann / Prêts / Lister les prêts par bibliothèque
+-- Vérifie la capacité à analyser l’activité d’une bibliothèque donnée.
 SELECT
 p.id_pret,
 p.date_pret,
@@ -214,6 +211,7 @@ WHERE p.id_bibliotheque_pret = 1
 ORDER BY p.date_pret DESC;
 
 -- Swann / Prêts / Ouvrages les plus fréquemment transférés et délais associés
+-- Sert à tester les statistiques de transfert et le calcul des délais logistiques.
 SELECT
 o.id_ouvrage,
 o.titre,
@@ -231,6 +229,7 @@ ORDER BY nb_transferts DESC, delai_moyen ASC
 LIMIT 5;
 
 -- Requête récursive : historique complet des transferts d’un exemplaire
+-- Permet de vérifier la traçabilité complète d’un exemplaire à travers plusieurs transferts.
 WITH RECURSIVE transferts_exemplaire AS (
 SELECT
 et.id_envoi,
@@ -287,6 +286,7 @@ ORDER BY etape;
 
 
 -- Vue commune pour les requêtes suivantes : prêts avec région
+-- Centralise la relation entre prêts et régions pour simplifier les analyses statistiques.
 CREATE OR REPLACE VIEW v_prets_avec_region AS
 SELECT
 p.id_pret,
@@ -300,6 +300,7 @@ JOIN region r ON r.id_region = ad.id_region
 JOIN exemplaire ex ON ex.id_exemplaire = p.id_exemplaire;
 
 -- Swann / Prêts / Popularité des ouvrages/collections par région de la bibliothèque — nombre d’emprunts
+-- Vérifie la capacité à analyser la popularité des ouvrages selon la localisation.
 SELECT
 v.region,
 o.titre,
@@ -311,6 +312,7 @@ ORDER BY v.region, nb_emprunts DESC;
 
 
 -- Swann / Prêts / Popularité des ouvrages/collections par région de la bibliothèque — période (30 jours)
+-- Permet de tester l’analyse temporelle des emprunts.
 SELECT
 v.region,
 o.titre,
@@ -347,6 +349,7 @@ ORDER BY v.region, nb_emprunts_12m DESC;
 
 
 -- Swann / Prêts / Popularité des ouvrages/collections par région de la bibliothèque — filtres (auteur)
+-- Vérifie le bon fonctionnement des filtres analytiques sur les emprunts.
 SELECT
 v.region,
 o.titre,
