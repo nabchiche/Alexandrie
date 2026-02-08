@@ -155,16 +155,18 @@ JOIN ouvrage o ON o.id_ouvrage = e.id_ouvrage
 WHERE e.id_emplacement IS NULL
 ORDER BY o.titre;
 
--- Ouvrages disponibles dans le réseau et transférables pour un abonné
--- Cette requête liste les titres des ouvrages disponibles dans d’autres bibliothèques
--- que celle de référence de l’abonné.
--- DISTINCT évite les doublons lorsqu’un ouvrage possède plusieurs exemplaires.
+-- Ouvrages disponibles dans le réseau et transférables pour un abonné donné
+-- Cette requête utilise une sous-requête pour récupérer la bibliothèque
+-- de référence de l’abonné, puis exclut cette bibliothèque des résultats.
 SELECT DISTINCT o.titre
 FROM exemplaire e
 JOIN ouvrage o ON o.id_ouvrage = e.id_ouvrage
-JOIN abonne a ON a.id_abonne = 1
 WHERE e.statut = 'disponible'
-AND e.id_bibliotheque <> a.id_bibliotheque_reference
+AND e.id_bibliotheque <> (
+    SELECT id_bibliotheque_reference
+    FROM abonne
+    WHERE id_abonne = 1
+)
 ORDER BY o.titre;
 
 -- =========================
@@ -174,19 +176,19 @@ ORDER BY o.titre;
 -- Identifier les prêts en retard
 -- Cette requête identifie les prêts encore en cours dont la date de retour prévue est dépassée.
 -- Elle permet de repérer les retards actuels.
+CREATE VIEW vue_prets_en_retard AS
 SELECT
-p.id_pret,
-a.nom,
-a.prenom,
-o.titre,
-p.date_retour_prevue
+    p.id_pret,
+    a.nom,
+    a.prenom,
+    o.titre,
+    p.date_retour_prevue
 FROM pret p
 JOIN exemplaire e ON e.id_exemplaire = p.id_exemplaire
 JOIN ouvrage o ON o.id_ouvrage = e.id_ouvrage
 JOIN abonne a ON a.id_abonne = p.id_abonne
 WHERE p.statut = 'en_cours'
-AND p.date_retour_prevue < NOW()
-ORDER BY p.date_retour_prevue;
+AND p.date_retour_prevue < NOW();
 
 -- Calculer le nombre de retards par abonné
 -- Cette requête compte le nombre de prêts rendus en retard pour chaque abonné.
