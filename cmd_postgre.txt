@@ -1,4 +1,0 @@
-psql -U <username> -d postgres -f alexandrie.sql  -> Lancer le fichier alexandrie.sql
-psql -U swannwilliame -d alexandrie -> se connecter à la base de données alexandrie
-psql -U swannwilliame -d alexandrie -c "\dt" -> lister les tables de la base de données alexandrie
-psql -U swannwilliame -d alexandrie -c "SELECT * FROM adresse;"  -> afficher le contenu de la table livre
