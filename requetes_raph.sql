@@ -1,4 +1,4 @@
-﻿-- RAPHAËL — Requêtes SQL pour Alexandrie (PostgreSQL)
+﻿-- RAPHAËL — Requêtes SQL
 -- Sections : 1. Réservations  2. Transferts  3. Événements & analyses
 
 
