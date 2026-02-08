@@ -423,3 +423,27 @@ INSERT INTO liaison_participation_evenement (id_evenement, id_abonne, nom_partic
 INSERT INTO rachat (id_ouvrage, id_bibliotheque, date_rachat, quantite, raison) VALUES
 (1, 1, '2024-01-15', 5, 'stock_insuffisant'),
 (2, 2, '2024-01-18', 2, 'stock_nul');
+
+-- =========================================================
+-- Jeu de données de test — Justification et pertinence
+-- =========================================================
+-- Ce jeu de données couvre l’ensemble du périmètre fonctionnel du projet Alexandrie.
+-- Il inclut plusieurs régions et bibliothèques, permettant de tester les requêtes
+-- multi-sites et les analyses par région.
+-- Les ouvrages sont liés à des auteurs, catégories et collections, ce qui valide
+-- les requêtes de recherche et de filtrage du catalogue.
+-- Les exemplaires présentent des statuts variés (disponible, emprunté, en transfert,
+-- perdu) ainsi que des cas sans emplacement, essentiels pour tester la disponibilité
+-- et la localisation.
+-- Les abonnés ont des bibliothèques de référence et des types d’abonnement différents,
+-- ce qui permet de vérifier l’éligibilité à l’emprunt.
+-- Les prêts couvrent des cas rendus à l’heure, en retard et en cours, rendant possibles
+-- les requêtes sur les retards, infractions et durées moyennes.
+-- Les réservations et transferts inter-bibliothèques permettent de tester la logique
+-- de circulation des ouvrages dans le réseau.
+-- Les données de distance et de coût rendent exploitables les analyses logistiques.
+-- Les événements et participations (abonnés et non-abonnés) permettent de tester
+-- les requêtes d’événements culturels et de similarité.
+-- Enfin, les rachats d’ouvrages illustrent les scénarios de gestion du stock.
+-- L’ensemble du jeu de tests est cohérent, réaliste et garantit que chaque requête
+-- SQL du projet produit des résultats pertinents et démontrables.
